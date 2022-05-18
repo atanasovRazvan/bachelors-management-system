@@ -1,11 +1,8 @@
-import logo from './logo.svg';
-import './App.css';
+import Storybook from './storybook-page/storybook'
 
 function App() {
   return (
-      <h1>
-        Heyoo
-      </h1>
+      <Storybook />
   );
 }
 

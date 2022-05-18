@@ -1,0 +1,19 @@
+.navigation{
+
+  background: rgb(93, 157, 216);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: absolute;
+  top: 0;
+
+  &-ubb{
+    height: 100px;
+  }
+
+  &-fpse{
+    height: 80px;
+    margin-right: 10px;
+  }
+}
