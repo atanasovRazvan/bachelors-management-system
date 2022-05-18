@@ -1,0 +1,55 @@
+.wrapper{
+  width: fit-content;
+}
+
+.table{
+  text-align: center;
+
+  &-head{
+    font-size: 36px;
+    th{
+      background: rgb(25, 76, 167);
+      color: white;
+      font-weight: normal;
+    }
+  }
+
+  &-body{
+    font-size: 28px;
+  }
+
+  th, td{
+    padding: 10px 15px;
+  }
+
+  th:not(:first-child){
+    border-left: 1px solid white;
+  }
+
+  &-download{
+    tr:after{
+      content: "Download";
+      position: relative;
+      top: 10px;
+      left: 20px;
+    }
+  }
+
+}
+
+.table td {
+  border: 1px solid rgb(25, 76, 167);
+}
+.table, .table td{
+  border-collapse: collapse;
+}
+
+.pagination{
+  margin-top: 10px;
+  text-align: center;
+  &-number{
+    display: inline;
+    font-size: 24px;
+    font-weight: bold;
+  }
+}

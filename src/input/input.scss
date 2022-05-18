@@ -1,0 +1,48 @@
+.input{
+  margin: 10px;
+
+  &-label{
+    font-size: 32px;
+    font-weight: bold;
+    color: rgb(25, 76, 167);
+  }
+
+  &-required{
+    .input-label:after{
+      content: " *";
+      color: red;
+    }
+  }
+
+  &-input{
+    min-height: 35px;
+    min-width: 300px;
+    font-size: 24px;
+    font-family: none;
+    border: 3px solid rgb(25, 76, 167);
+    border-radius: 10px;
+    &:focus{
+      outline: none;
+      border: 3px solid rgb(200, 200, 25);
+    }
+  }
+
+  &-small{
+    .input-input{
+      min-height: 35px;
+      min-width: 40px;
+      max-width: 40px;
+      text-align: center;
+    }
+  }
+
+  &-dropdown{
+    min-height: 40px;
+    min-width: 310px;
+  }
+
+  &-textarea{
+    min-height: 100px;
+    min-width: 750px;
+  }
+}
