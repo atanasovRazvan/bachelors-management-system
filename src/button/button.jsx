@@ -12,7 +12,11 @@ const Button = ({ action = () => {console.log("clicked")}, disabled, active, var
 
     return(
         <button className={classes} disabled={disabled} onClick={action}>
-            {value}
+            { variant === "icon" ?
+                <img src={value} alt={"Custom Image"} width={25} height={25}/>
+                :
+                value
+            }
         </button>
     );
 }

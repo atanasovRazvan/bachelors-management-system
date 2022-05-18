@@ -1,6 +1,7 @@
 import './table.scss'
 import Button from "../button/button";
 import {useEffect, useState} from "react";
+import downloadSVG from '../utils/download.svg';
 
 const Table = ( {headers = [], data = [], paginated = false, download = false} ) => {
 
@@ -59,6 +60,7 @@ const Table = ( {headers = [], data = [], paginated = false, download = false} )
                   { displayData.map((set) => (
                       <tr>
                           { set.map(value => <td>{value}</td>) }
+                          { download ? <Button variant="icon" value={downloadSVG} /> : ''}
                       </tr>
                   ))}
               </tbody>

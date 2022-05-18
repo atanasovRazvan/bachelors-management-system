@@ -26,15 +26,6 @@
     border-left: 1px solid white;
   }
 
-  &-download{
-    tr:after{
-      content: "Download";
-      position: relative;
-      top: 10px;
-      left: 20px;
-    }
-  }
-
 }
 
 .table td {
