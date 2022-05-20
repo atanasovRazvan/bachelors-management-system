@@ -17,6 +17,7 @@ const Navigation = ({ menu = [], active = 1 }) => {
                         variant={button.variant}
                         color={button.color}
                         value={button.value}
+                        action={button.action}
                     />
                 ))}
             </div>
