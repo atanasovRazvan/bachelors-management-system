@@ -41,7 +41,7 @@ const CreateAccounts = () => {
     }
 
     return(
-        <div className="wrapper">
+        <div className="createacctounts-wrapper">
             <div className="flex-3">
                 <Input
                     label="Nume de utilizator"

@@ -38,7 +38,7 @@ const Criteria = () => {
     }
 
     return(
-        <div className="wrapper">
+        <div className="criteria-wrapper">
             <div className="buttons-and-input">
                 <div className="buttons">
                     <div className="left">
