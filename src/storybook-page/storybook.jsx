@@ -4,7 +4,7 @@ import Button from "../button/button";
 import Navigation from "../navigation/navigation";
 import Input from "../input/input";
 import {useState} from "react";
-import Error from "../error/error";
+import Message from "../message/message";
 import Table from "../table/table";
 
 const navMenu = [
@@ -205,7 +205,9 @@ const Storybook = () => {
           <hr />
           {renderInput()}
           <hr />
-          <Error message={"Utilizator sau parola incorecte"} />
+          <Message variant={"error"} message={"Eroare: Utilizator sau parola incorecte"} />
+          <hr />
+          <Message variant={"succes"} message={"Succes: Utilizator inregistrat"} />
           <hr />
           <Table
             data={tableData}

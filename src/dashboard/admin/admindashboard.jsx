@@ -2,6 +2,9 @@ import './admindashboard.scss';
 import Navigation from "../../navigation/navigation";
 import {useContext, useState} from "react";
 import {AuthContext} from "../../context/AuthProvider";
+import CreateAccounts from "./createacoounts/createaccounts";
+import Criteria from "./criteria/criteria";
+import Status from "./status/status";
 
 const AdminDashboard = () => {
 
@@ -37,11 +40,22 @@ const AdminDashboard = () => {
         }
     ]
 
+    const renderContent = () => {
+        if( content === 1 )
+            return <CreateAccounts />
+
+        if( content === 3 )
+            return <Criteria />
+
+        if( content === 2 )
+            return <Status />
+    }
+
     return (
         <div className="container">
             <Navigation menu={navigation} active={content} />
             <div className="content">
-                <h1> Content of {navigation[content-1].value} </h1>
+                {renderContent()}
             </div>
         </div>
     )

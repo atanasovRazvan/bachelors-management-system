@@ -14,7 +14,6 @@ const Input = ( { label, variant = "normal", data = [], value, onEdit, type = "t
             className="input-input input-dropdown"
             onChange={(event) => onEdit(event.target.value)}
         >
-            <option value='value' selected="selected">Value</option>
             { data.map((entry) => (<option key={entry.label} value={entry.value}>{entry.label}</option>)) }
         </select>
     );
