@@ -1,14 +1,13 @@
 import './input.scss';
 
-const Input = ( { label, variant = "normal", data = [], value, onEdit, type = "text", required = false } ) => {
+const Input = ( { label, variant = "normal", data = [], value, onEdit, type = "text", required = false, readonly=false } ) => {
 
     const classes = `
         input
         input-${variant}
         ${required ? 'input-required' : ''}
+        ${readonly ? 'input-readonly' : ''}
     `;
-
-    console.log(data);
 
     const renderSimpleDropdown = () => (
         <select
@@ -16,7 +15,7 @@ const Input = ( { label, variant = "normal", data = [], value, onEdit, type = "t
             onChange={(event) => onEdit(event.target.value)}
         >
             <option value='value' selected="selected">Value</option>
-            { data.map((entry) => (<option value={entry.value}>{entry.label}</option>)) }
+            { data.map((entry) => (<option key={entry.label} value={entry.value}>{entry.label}</option>)) }
         </select>
     );
 
@@ -26,6 +25,7 @@ const Input = ( { label, variant = "normal", data = [], value, onEdit, type = "t
           value={value}
           onChange={(event) => onEdit(event.target.value)}
           type={type}
+          disabled={readonly}
       >
       </input>
     );

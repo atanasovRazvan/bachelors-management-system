@@ -54,6 +54,15 @@ const Storybook = () => {
         setInputValue(newValue);
     }
 
+    const onEditTable = (page, column, line, value) => {
+        console.log(" - - - - - - - - - - - - - - - - - - - - - ");
+        console.log("Page: " + page);
+        console.log("Column: " + column);
+        console.log("Line: " + line);
+        console.log("Value: " + value);
+        console.log(" - - - - - - - - - - - - - - - - - - - - - ");
+    }
+
     const renderButton = () => (
         <div>
             <Button
@@ -151,6 +160,14 @@ const Storybook = () => {
                 required={true}
             />
             <Input
+                label="Readonly"
+                variant="normal"
+                value={inputValue}
+                type="password"
+                onEdit={onEdit}
+                readonly={true}
+            />
+            <Input
                 label="Small"
                 variant="small"
                 value={inputValue}
@@ -211,6 +228,14 @@ const Storybook = () => {
               download={true}
           />
           <hr />
+          <Table
+              data={tableData}
+              headers={headers}
+              paginated={false}
+              download={false}
+              editableColumns={[0,2]}
+              onEditTable={onEditTable}
+          />
       </div>
     );
 };

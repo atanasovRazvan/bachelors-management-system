@@ -23,15 +23,22 @@
     border-radius: 10px;
     &:focus{
       outline: none;
-      border: 3px solid rgb(200, 200, 25);
+      border: 3px solid rgb(25, 255, 255);
     }
   }
 
   &-small{
     .input-input{
-      min-height: 35px;
       min-width: 40px;
       max-width: 40px;
+      text-align: center;
+    }
+  }
+
+  &-medium{
+    .input-input{
+      min-width: 120px;
+      max-width: 120px;
       text-align: center;
     }
   }

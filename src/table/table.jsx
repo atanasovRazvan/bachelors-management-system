@@ -2,8 +2,9 @@ import './table.scss'
 import Button from "../button/button";
 import {useEffect, useState} from "react";
 import downloadSVG from '../utils/download.svg';
+import Input from "../input/input";
 
-const Table = ( {headers = [], data = [], paginated = false, download = false} ) => {
+const Table = ( {headers = [], data = [], paginated = false, download = false, editableColumns = [], onEditTable})  => {
 
     const [displayData, setDisplayData] = useState([]);
     const [page, setPage] = useState(1);
@@ -57,9 +58,22 @@ const Table = ( {headers = [], data = [], paginated = false, download = false} )
                   { headers.map((value) => <th>{value}</th>) }
               </thead>
               <tbody className={"table-body"}>
-                  { displayData.map((set) => (
-                      <tr>
-                          { set.map(value => <td>{value}</td>) }
+                  { displayData.map((set, line) => (
+                      <tr key={line}>
+                          { set.map((value, index) => (
+                              <td key={index}>
+                              {editableColumns.includes(index) ?
+                                    <Input
+                                        type="text"
+                                        value={value}
+                                        variant={"medium"}
+                                        onEdit={() => onEditTable(page, index, line, value)}
+                                    />
+                                    :
+                                    value
+                              }
+                              </td>
+                          ))}
                           { download ? <Button variant="icon" value={downloadSVG} /> : ''}
                       </tr>
                   ))}
