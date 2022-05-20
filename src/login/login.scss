@@ -1,0 +1,19 @@
+.login{
+  &-bg {
+    background: url("../utils/diss_background.jpg") no-repeat center center;
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+    z-index: -1;
+    opacity: 0.2;
+  }
+
+  &-content{
+    margin-top: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+  }
+}

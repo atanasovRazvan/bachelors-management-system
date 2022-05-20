@@ -1,8 +1,11 @@
-import Storybook from './storybook-page/storybook'
+import AuthProvider from "./context/AuthProvider";
+import AppRouter from "./utils/AppRouter";
 
 function App() {
   return (
-      <Storybook />
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
   );
 }
 
