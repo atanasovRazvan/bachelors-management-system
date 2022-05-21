@@ -16,7 +16,7 @@ const Login = () => {
         // TODO: POST Login
         // IF all good, do:
         setUsername(username);
-        setUserRole('student');
+        setUserRole('coordonator');
     }
 
     return(
