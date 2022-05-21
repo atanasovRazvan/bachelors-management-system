@@ -1,0 +1,53 @@
+.wrapper-requests{
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 250px;
+
+  .norequests{
+    margin-top: -50px;
+    font-size: 48px;
+    color: rgb(25, 76, 167);
+  }
+
+  .text{
+    font-size: 28px;
+    font-weight: bold;
+    .red{
+      color: red;
+    }
+  }
+
+  .container{
+
+    background: white;
+    border: 2px solid rgb(25, 76, 167);
+    border-radius: 25px;
+    padding: 25px;
+
+    .inputs{
+      display: flex;
+      gap: 50px;
+      & > *{
+        display: flex;
+        gap: 10px;
+      }
+    }
+
+    .message{
+      margin-top: 50px;
+      & > *{
+        display: flex;
+        gap: 10px;
+      }
+    }
+
+    .buttons{
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+    }
+  }
+}

@@ -53,10 +53,12 @@ const coordonatori = [
 const interes = [["Interes 1"], ["Sunt foarte interesant cafea"], ["Psihologia e de cacat dar e Daniel David la noi"]];
 
 const StudentDashboard = () => {
+
     const [content, setContent] = useState(1);
     const [status, setStatus] = useState(null);
     const [changed, setChanged] = useState(false);
     const [coordinator, setCoordinator] = useState("");
+    const [message, setMessage] = useState("");
 
     const onSelectCoordinator = (newValue) => {
         setCoordinator(newValue);
@@ -132,6 +134,16 @@ const StudentDashboard = () => {
                     <Table
                         headers={["Interese"]}
                         data={interes}
+                    />
+                    :
+                    null
+                }
+                {coordinator !== "" ?
+                    <Input
+                        variant="textarea"
+                        label="Mesaj"
+                        value={message}
+                        onEdit={(newValue) => setMessage(newValue)}
                     />
                     :
                     null
