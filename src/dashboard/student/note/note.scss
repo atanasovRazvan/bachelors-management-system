@@ -1,0 +1,23 @@
+.note-wrapper{
+  display: flex;
+  width: 100%;
+  margin-top: 250px;
+  justify-content: center;
+
+  .table{
+    width: 50%;
+    margin-left: 50px;
+  }
+
+  .sesiune{
+    margin-right: 100px;
+    width: 300px;
+    margin-top: 25px;
+
+    & > *{
+      margin-top: 50px;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}

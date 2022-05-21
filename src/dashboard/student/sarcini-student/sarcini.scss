@@ -1,0 +1,31 @@
+.student-assignments-wrapper{
+
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 250px;
+
+  .left{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+
+    p{
+      color: red;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: -1px;
+      position: relative;
+      top: -60px;
+    }
+  }
+
+  .right{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+}

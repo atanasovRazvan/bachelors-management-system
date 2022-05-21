@@ -3,3 +3,22 @@
     margin-top: 150px;
   }
 }
+
+.waiting-wrapper{
+  p{
+    font-size: 52px;
+    position: relative;
+    color: rgb(25, 76, 167);
+    top: 160px;
+    text-align: center;
+    letter-spacing: -1px;
+  }
+}
+
+.wrapper-request{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 250px;
+  gap: 50px;
+}

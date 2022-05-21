@@ -34,6 +34,7 @@ const Input = ( { label, variant = "normal", data = [], value, onEdit, type = "t
             className="input-input input-textarea"
             value={value}
             onChange={(event) => onEdit(event.target.value)}
+            disabled={readonly}
         >
         </textarea>
     );

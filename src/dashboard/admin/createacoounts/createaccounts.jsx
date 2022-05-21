@@ -4,7 +4,7 @@ import Button from "../../../button/button";
 import Error from "../../../message/message";
 import {useState} from "react";
 
-const dropdownData = [
+const dropdownRole = [
     {
         value: "student",
         label: "Student",
@@ -13,7 +13,33 @@ const dropdownData = [
         value: "coordonator",
         label: "Coordonator",
     },
-]
+];
+
+const dropdownStudii = [
+    {
+        value: "licenta",
+        label: "Licenta",
+    },
+    {
+        value: "master",
+        label: "Master",
+    },
+];
+
+const dropdownInvatamant = [
+    {
+        value: "if",
+        label: "IF",
+    },
+    {
+        value: "ifr",
+        label: "IFR",
+    },
+    {
+        value: "id",
+        label: "ID",
+    },
+];
 
 const CreateAccounts = () => {
 
@@ -25,6 +51,11 @@ const CreateAccounts = () => {
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("Student");
     const [nrMatricol, setNrMatricol] = useState("");
+    const [specializare, setSpecializare] = useState("");
+    const [generatie, setGeneratie] = useState("");
+    const [studii, setStudii] = useState("Licenta");
+    const [invatamant, setInvatamant] = useState("IF");
+    const [grupa, setGrupa] = useState("");
 
     const handleSubmit = () => {
         //TODO: Legatura la back
@@ -36,6 +67,11 @@ const CreateAccounts = () => {
             password,
             role,
             nr_matricol: nrMatricol,
+            specializare,
+            generatie,
+            studii,
+            invatamant,
+            grupa
         };
         console.log(reqObj);
     }
@@ -58,11 +94,11 @@ const CreateAccounts = () => {
                     variant="dropdown"
                     value={role}
                     onEdit={(newValue) => setRole(newValue)}
-                    data={dropdownData}
+                    data={dropdownRole}
                 />
             </div>
 
-            <div className="flex-2">
+            <div className="flex-3">
                 <Input
                     label="Nume"
                     value={nume}
@@ -73,17 +109,48 @@ const CreateAccounts = () => {
                     value={prenume}
                     onEdit={(newValue) => setPrenume(newValue)}
                 />
-            </div>
-            <div className="flex-2">
                 <Input
                     label="Numar Matricol"
                     value={nrMatricol}
                     onEdit={(newValue) => setNrMatricol(newValue)}
                 />
+            </div>
+            <div className="flex-3">
                 <Input
                     label="Email"
                     value={email}
                     onEdit={(newValue) => setEmail(newValue)}
+                />
+                <Input
+                    label="Specializare"
+                    value={specializare}
+                    onEdit={(newValue) => setSpecializare(newValue)}
+                />
+                <Input
+                    label="Generatie"
+                    value={generatie}
+                    onEdit={(newValue) => setGeneratie(newValue)}
+                />
+            </div>
+            <div className="flex-3">
+                <Input
+                    label="Forma Studii"
+                    value={studii}
+                    onEdit={(newValue) => setStudii(newValue)}
+                    variant="dropdown"
+                    data={dropdownStudii}
+                />
+                <Input
+                    label="Forma Invatamant"
+                    value={invatamant}
+                    onEdit={(newValue) => setInvatamant(newValue)}
+                    variant="dropdown"
+                    data={dropdownInvatamant}
+                />
+                <Input
+                    label="Grupa"
+                    value={grupa}
+                    onEdit={(newValue) => setGrupa(newValue)}
                 />
             </div>
             <div className="button">

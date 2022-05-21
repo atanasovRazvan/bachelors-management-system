@@ -67,7 +67,7 @@ const Table = ( {headers = [], data = [], paginated = false, download = false, e
                                         type="text"
                                         value={value}
                                         variant={"medium"}
-                                        onEdit={() => onEditTable(page, index, line, value)}
+                                        onEdit={(newValue) => onEditTable(page, index, line, newValue)}
                                     />
                                     :
                                     value
