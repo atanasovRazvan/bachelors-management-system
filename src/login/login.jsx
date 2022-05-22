@@ -31,7 +31,7 @@ const Login = () => {
                 setMessage("Eroare: Username sau Parola incorecte!");
             }
         }).catch((err) => {
-            setMessage(err.message);
+            setMessage("Eroare: Username sau Parola incorecte!");
         });
     }
 
