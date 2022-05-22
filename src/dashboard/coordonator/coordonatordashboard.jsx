@@ -1,18 +1,29 @@
 import './coordonatordashboard.scss';
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../../context/AuthProvider";
 import Navigation from "../../navigation/navigation";
 import GestionareStudenti from "./gestionare_studenti/gestionare-studenti";
 import SarciniCoordonator from "./sarcini/sarcini";
 import Interese from "./interese/interese";
 import Cereri from "./cereri/cereri";
+import axios from "axios";
+import {baseUrl} from "../../utils/constants";
 
 const CoordonatorDashboard = () => {
 
     const [content, setContent] = useState(1);
+    const [requests, setRequests] = useState(false);
+    const { username, userRole } = useContext(AuthContext);
 
-    //TODO: see if there are requests
-    const requests = true;
+    useEffect(() => {
+        if(userRole === "coordinator") {
+            axios.get(`${baseUrl}request/${username}`)
+                .then((res) => {
+                    if (res.data.length > 0)
+                        setRequests(true);
+                });
+        }
+    }, []);
 
     const {setUsername, setUserRole} = useContext(AuthContext);
     if ( content === 5 ){
