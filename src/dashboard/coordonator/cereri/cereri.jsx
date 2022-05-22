@@ -1,67 +1,49 @@
 import './cereri.scss'
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Input from "../../../input/input";
 import Button from "../../../button/button";
 import SadPanda from "../../../utils/sadpanad.png";
-
-const initialRequests = [
-    {
-        requestId: "1",
-        firstName: "Smth",
-        lastName: "Other",
-        text: "hai doamna te rog",
-        daysLeft: "8",
-    },
-    {
-        requestId: "2",
-        firstName: "AAA",
-        lastName: "bbb",
-        text: "hai doamna te rog",
-        daysLeft: "13",
-    },
-    {
-        requestId: "3",
-        firstName: "Adasdasd",
-        lastName: "Ahmed",
-        text: "hai doamna te rog",
-        daysLeft: "9",
-    },
-    {
-        requestId: "4",
-        firstName: "Da ce vrei",
-        lastName: "De la mn",
-        text: "hai doamna te rog",
-        daysLeft: "2",
-    },
-]
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
+import {AuthContext} from "../../../context/AuthProvider";
 
 const Cereri = () => {
 
-    const [data, setData] = useState(initialRequests);
+    const [requests, setRequests] = useState([]);
     const [index, setIndex] = useState(0);
-    const processedData = data.sort((a,b) => (a.daysLeft > b.daysLeft) ? 1 : ((b.daysLeft > a.daysLeft) ? -1 : 0))
+    const { username } = useContext(AuthContext);
+    const processedData = requests.sort((a,b) => (a.daysLeft > b.daysLeft) ? 1 : ((b.daysLeft > a.daysLeft) ? -1 : 0))
+
+    useEffect(() => {
+        axios.get(`${baseUrl}request/${username}`)
+            .then((res) => {
+                setRequests(res.data);
+            });
+    }, []);
 
     const handleAccept = () => {
-        //TODO: /request/accept/id
-        const newData = data.filter((value, no) => no !== index);
-        if(index === data.length - 1)
+        const newData = requests.filter((value, no) => no !== index);
+        axios.post(`${baseUrl}request/accept/${requests[index].requestId}`)
+            .then(() => {});
+        if(index === requests.length - 1)
             setIndex(index-1);
-        setData(newData);
+        setRequests(newData);
     }
 
     const handleSkip = () => {
-        if (index === data.length - 1)
+        if (index === requests.length - 1)
             setIndex(0);
         else
             setIndex(index+1);
     }
 
     const handleReject = () => {
-        //TODO: /request/reject/id
-        const newData = data.filter((value, no) => no !== index);
-        if(index === data.length - 1)
+        const newData = requests.filter((value, no) => no !== index);
+        axios.post(`${baseUrl}request/reject/${requests[index].requestId}`)
+            .then(() => {});
+        if(index === requests.length - 1)
             setIndex(index-1);
-        setData(newData);
+        setRequests(newData);
     }
 
     const renderNoRequests = () => {
@@ -83,12 +65,12 @@ const Cereri = () => {
                 <div className="inputs">
                     <Input
                         label="Nume: "
-                        value={processedData[index]?.lastName}
+                        value={processedData[index]?.userLastName}
                         readonly={true}
                     />
                     <Input
                         label="Prenume: "
-                        value={processedData[index]?.firstName}
+                        value={processedData[index]?.userFirstName}
                         readonly={true}
                     />
                 </div>
@@ -122,7 +104,7 @@ const Cereri = () => {
     );
 
     return(
-        data.length > 0 ?
+        requests?.length > 0 ?
             renderRequests()
             :
             renderNoRequests()

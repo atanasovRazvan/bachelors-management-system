@@ -8,57 +8,50 @@ import Input from "../../input/input";
 import LoadingSpinner from "../../utils/loading/loading";
 import Button from "../../button/button";
 import Table from "../../table/table";
-
-const state = {
-    asignat: null,
-    cerere: true,
-    coordonator: "dan.suciu@ubb.ro",
-};
-
-const state2 = {
-    asignat: null,
-    cerere: false,
-    coordonator: null,
-}
-
-const state3 = {
-    asignat: "dan.suciu@ubb.ro",
-    cerere: null,
-    coordonator: null,
-}
-
-const coordonatori = [
-    {
-        value: "",
-        label: "Selecteaza...",
-    },
-    {
-        value:"dan.suciu@ubb.ro",
-        label:"dan.suciu@ubb.ro",
-    },
-    {
-        value:"atanasov.razvan@ubb.ro",
-        label:"atanasov.razvan@ubb.ro",
-    },
-    {
-        value:"cosmin.cojocaru@ubb.ro",
-        label:"cosmin.cojocaru@ubb.ro",
-    },
-    {
-        value:"whatever@ubb.ro",
-        label:"whatever@ubb.ro",
-    },
-];
-
-const interes = [["Interes 1"], ["Sunt foarte interesant cafea"], ["Psihologia e de cacat dar e Daniel David la noi"]];
+import {baseUrl} from "../../utils/constants";
+import axios from "axios";
 
 const StudentDashboard = () => {
 
+    const { isAsigned, hasRequest, coordinatorUsername, username, setIsAsigned, setHasRequest, setCoordinatorName } = useContext(AuthContext);
     const [content, setContent] = useState(1);
-    const [status, setStatus] = useState(null);
+    const [status, setStatus] = useState({isAsigned, hasRequest, coordinatorUsername});
     const [changed, setChanged] = useState(false);
     const [coordinator, setCoordinator] = useState("");
     const [message, setMessage] = useState("");
+    const [coordinators, setCoordinators] = useState([]);
+    const [interests, setInterests] = useState([]);
+
+    const displayedInterests = () => {
+        const index = coordinators.findIndex(el => el.value === coordinator);
+        if(coordinator === "")
+            return [];
+        return interests[index];
+    };
+
+    useEffect(() => {
+        axios.get(`${baseUrl}coordinator`)
+            .then((res) => {
+                const newCoordinators = [{
+                    value: "",
+                    label: "Selecteaza...",
+                }];
+                const newInterests = [[]];
+                res.data.forEach((coordinator) => {
+                    const newCoordinator = {
+                        value: coordinator.username,
+                        label: coordinator.firstName + " " + coordinator.lastName,
+                    };
+                    newCoordinators.push(newCoordinator);
+                    const newInterest = [];
+                    coordinator?.interests.forEach((interest) => newInterest.push([interest]));
+                    newInterests.push(newInterest);
+                });
+                setCoordinators(newCoordinators);
+                setInterests(newInterests);
+            })
+
+    }, [])
 
     const onSelectCoordinator = (newValue) => {
         setCoordinator(newValue);
@@ -69,13 +62,17 @@ const StudentDashboard = () => {
     }
 
     const handleSubmit = () => {
-        setChanged(false);
-        setStatus(state3);
+        axios.post(`${baseUrl}request/${username}`, {
+            coordinatorUsername: coordinator,
+            text: message,
+        }).then((res) => {
+            if(res.status === 200) {
+                setChanged(false);
+                setStatus({...status, hasRequest: true});
+                setHasRequest(true);
+            }
+        })
     }
-
-    useEffect(() => {
-        setStatus(state2);
-    }, [])
 
     const {setUsername, setUserRole} = useContext(AuthContext);
     if ( content === 3 ){
@@ -126,14 +123,14 @@ const StudentDashboard = () => {
             <div className="wrapper-request">
                 <Input
                     variant={"dropdown"}
-                    data={coordonatori}
+                    data={coordinators}
                     onEdit={onSelectCoordinator}
                     label={"Coordonator"}
                 />
                 {coordinator !== "" ?
                     <Table
                         headers={["Interese"]}
-                        data={interes}
+                        data={() => displayedInterests()}
                     />
                     :
                     null
@@ -161,10 +158,10 @@ const StudentDashboard = () => {
         if (status === null)
             return <div className="container" />
 
-        if (status.asignat)
+        if (status.isAsigned)
             return <div className="container"> <Navigation menu={navigation} active={content} /><div className="content">{renderContent()}</div></div>
 
-        if (status.cerere)
+        if (status.hasRequest)
             return <div className="container"> <Navigation menu={[navigation[2]]}/><div className="content">{renderWaitingForResponse()}</div></div>
 
         return <div className="container"> <Navigation menu={[navigation[2]]}/><div className="content">{renderPickCoordinator()}</div></div>

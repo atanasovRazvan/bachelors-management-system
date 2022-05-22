@@ -1,42 +1,37 @@
 import './sarcini.scss';
 import Input from "../../../input/input";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Button from "../../../button/button";
-
-
-const data = [
-    {
-        number: "1",
-        prompt: "asdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asf",
-        deadline: "1653323054",
-        remaining: "5",
-    },
-    {
-        number: "2",
-        prompt: "Sarcina 3",
-        deadline: "1653323054",
-        remaining: "0",
-    },
-    {
-        number: "3",
-        prompt: "sarcina 2",
-        deadline: "1653323054",
-        remaining: "-1",
-    }
-]
-
+import {AuthContext} from "../../../context/AuthProvider";
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
 
 const SarciniStudent = () => {
 
+    const { username, coordinatorUsername } = useContext(AuthContext);
     const [tab, setTab] = useState(1);
+    const [assignments, setAssignments] = useState([]);
 
-    const processData = () => {
-        return data.sort((a,b) => (a.number > b.number) ? 1 : ((b.number > a.number) ? -1 : 0))
+    useEffect(() => {
+        axios.get(`${baseUrl}assignment/get/${username}/${coordinatorUsername}`)
+            .then((res) => {
+                if(res.status === 200){
+                    setAssignments(res.data);
+                }
+            })
+    }, []);
+
+    const clickUpload = () => {
+        document.getElementById('uploadpdf').click();
     }
 
-    const uploadPDF = () => {
-        //TODO: Upload file
-        console.log("upload pdf");
+    const handleUpload = () => {
+        const pdf = document.getElementById("uploadpdf").files[0];
+        let formData = new FormData();
+        formData.append("file", pdf);
+        axios.post(`${baseUrl}paper/${username}`, formData).then(() => {
+            alert("Fisier incarcat cu succes!");
+        });
     }
 
     return(
@@ -46,31 +41,33 @@ const SarciniStudent = () => {
                     variant="textarea"
                     label="Cerinta"
                     readonly={true}
-                    value={processData(data)[tab-1].prompt}
+                    value={assignments[tab-1]?.details}
                 />
 
                 <Input
                     readonly={true}
                     label={"Termen"}
                     variant={"medium"}
-                    value={new Date(processData(data)[tab-1].deadline * 1000).toLocaleDateString()}
+                    value={assignments[tab-1]?.dueDate}
                 />
-                <p>{processData(data)[tab-1].remaining >= 0 ?
-                    processData(data)[tab-1].remaining + " zile ramase"
-                    :
-                    "Termenul este depasit"
+                <p>{
+                    assignments[tab-1]?.daysLeft >= 0 ?
+                        assignments[tab-1]?.daysLeft + " zile ramase"
+                        :
+                        "Termenul este depasit"
                     }
                 </p>
 
+                <input type="file" name="uploadpdf" id="uploadpdf" onChange={handleUpload} className="uploadinput"/>
                 <Button
                     value={"Incarca lucrarea PDF ⇪"}
-                    disabled={processData(data)[tab-1].remaining < 0}
-                    action={uploadPDF}
+                    disabled={assignments[tab-1]?.daysLeft < 0}
+                    action={clickUpload}
                 />
             </div>
 
             <div className="right">
-                { data.map((value, index) => (
+                { assignments.map((value, index) => (
                     <Button
                         variant="circle"
                         value={index+1}

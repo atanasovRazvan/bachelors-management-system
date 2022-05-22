@@ -1,28 +1,34 @@
 import Input from "../../../input/input";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Button from "../../../button/button";
 import './criteria.scss';
-
-const initialCriteria = ["Criteriul 1", "Criteriul 2", "as;oansglas oasjl asfl asl fasf asfasf asfasfl aslfi asfjlasifh sa;ojfo;asf;oashfof sd"];
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
 
 const Criteria = () => {
 
     const [tab, setTab] = useState(1);
-    //TODO: get criteria
-    const [criteria, setCriteria] = useState(initialCriteria);
+    const [criteria, setCriteria] = useState([]);
     const [changed, setChanged] = useState(false);
+
+    useEffect(() => {
+        axios.get(`${baseUrl}criteria`)
+            .then((res) => {
+                setCriteria(res.data);
+            })
+    }, []);
 
     const newCriteria = (value) => {
         setChanged(true);
         return criteria.map((crit, index) => {
             if(index === tab-1)
-                return value;
+                return {criteriaId: crit.criteriaId, criteria: value};
             return crit;
         })
     }
 
     const handleAdd = () => {
-        setCriteria([...criteria, ""]);
+        setCriteria([...criteria, {criteria: ""}]);
         setChanged(true);
     }
 
@@ -34,7 +40,11 @@ const Criteria = () => {
 
     const handleSave = () => {
         setChanged(false);
-        //TODO: send criteria
+        axios.post(`${baseUrl}criteria`, criteria)
+            .then((res) => {
+                alert("Criteriile au fost salvate cu succes!");
+            })
+            .catch(() => {alert("A aparut o eroare la salvarea criteriilor...")});
     }
 
     return(
@@ -66,7 +76,8 @@ const Criteria = () => {
                 </div>
                 <Input
                     variant={"textarea"}
-                    value={criteria[tab-1]}
+                    readonly={criteria?.length <= 0}
+                    value={criteria[tab-1]?.criteria}
                     onEdit={(newValue) => setCriteria(newCriteria(newValue))}
                 />
             </div>

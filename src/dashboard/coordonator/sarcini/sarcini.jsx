@@ -1,86 +1,70 @@
 import './sarcini.scss';
 import Input from "../../../input/input";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Button from "../../../button/button";
-
-const studenti = [
-    {
-        username: "a@a.com",
-        firstName: "First",
-        lastName: "Last",
-    },
-    {
-        username: "b@b.com",
-        firstName: "Birst",
-        lastName: "Bast",
-    },
-    {
-        username: "c@c.com",
-        firstName: "Cirst",
-        lastName: "Cast",
-    },
-]
-
-const initialAssignments = [
-    {
-        number: "1",
-        prompt: "asdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asfasdas dasd asdsad asdasdadasd safasfasfasfsaf asfafafasf asfasfasf afasfasfa sfasfasfa sfasfasfas fasfafasfa sfsafasfasf asf",
-        deadline: null,
-        remaining: null,
-        grade: "5",
-    },
-    {
-        number: "2",
-        prompt: "Sarcina 3",
-        deadline: "1653323054",
-        remaining: "0",
-        grade: null,
-    },
-    {
-        number: "3",
-        prompt: "sarcina 2",
-        deadline: "1653323054",
-        remaining: "-1",
-        grade: null,
-    }
-]
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
+import {AuthContext} from "../../../context/AuthProvider";
 
 const emptyObject = {
-    number: null,
-    prompt: null,
-    deadline: null,
-    remaining: null,
-    grade: null,
-};
+    details: "",
+    dueDate: null,
+    grade: 0,
+}
 
 const SarciniCoordonator = () => {
 
-    const [studentUsername, setStudentUsername] = useState(studenti[0]);
+    const [studentUsername, setStudentUsername] = useState("");
+    const [students, setStudents] = useState([]);
+    const { username } = useContext(AuthContext);
     const [assignments, setAssignments] = useState([]);
     const [tab, setTab] = useState(1);
     const [changed, setChanged] = useState(false);
 
-    const dropdownStudents = studenti.map((student) => ({label: student.firstName + " " + student.lastName, value: student.username}));
+    useEffect(() => {
+        axios.get(`${baseUrl}coordinator/${username}/students`)
+            .then((res) => {
+                setStudents(res.data);
+                setStudentUsername(res.data[0]?.username);
+            });
+    }, []);
+
+    useEffect(() => {
+        if(studentUsername.length > 0)
+            axios.get(`${baseUrl}assignment/get/${studentUsername}/${username}`)
+                .then((res) => {
+                    setAssignments(res.data);
+                });
+    }, [studentUsername])
+
+    const dropdownStudents = students.map((student) => ({label: student.firstName + " " + student.lastName, value: student.username}));
 
     console.log(assignments);
 
-    const getAssignments = (username) => {
-        //TODO: Get assignments
-        console.log(username);
-        setAssignments(initialAssignments);
+    const getAssignments = (value) => {
+        setStudentUsername(value);
+        axios.get(`${baseUrl}assignment/get/${studentUsername}/${username}`)
+            .then((res) => {
+                setAssignments(res.data);
+            });
         setChanged(false);
     }
 
     const handleSave = () => {
-        //TODO: Save assignments
-        console.log("save");
         setChanged(false);
+        axios.post(`${baseUrl}assignment/assign/${studentUsername}/${username}`, assignments)
+            .then(() => {
+                alert("Sarcini actualizate cu succes!");
+            })
+            .catch(() => {
+                alert("A aparut o problema in actualizarea sarcinilor...");
+            });
     }
 
     const editPrompt = (value) => {
         const newAssignments = assignments.map((assignment, index) => {
             if (index === tab - 1)
-                return {...assignment, prompt: value}
+                return {...assignment, details: value}
             return assignment;
         });
         setAssignments(newAssignments);
@@ -90,7 +74,7 @@ const SarciniCoordonator = () => {
     const changeDeadline = (value) => {
         const newAssignments = assignments.map((assignment, index) => {
             if (index === tab - 1)
-                return {...assignment, deadline: new Date(value).getTime() / 1000}
+                return {...assignment, dueDate: new Date(value).toISOString().split('T')[0]}
             return assignment;
         });
         setAssignments(newAssignments);
@@ -108,13 +92,19 @@ const SarciniCoordonator = () => {
     }
 
     const downloadPaper = () => {
-        //TODO: Download Paper
-        console.log("downloadPaper");
+        const { fileName } = students[students.findIndex((student) => student.username === studentUsername)]
+        if(fileName && fileName.length > 0){
+            window.open(`${baseUrl}paper/${fileName}`);
+        }
+        else{
+            alert("Acest student nu are un fisier incarcat.");
+        }
     }
 
     const handleAdd = () => {
         setAssignments([...assignments, emptyObject]);
         setChanged(true);
+        setTab(1);
     }
 
     return (
@@ -141,24 +131,24 @@ const SarciniCoordonator = () => {
                     <Input
                         variant="textarea"
                         label="Cerinta"
-                        readonly={assignments[tab-1]?.remaining < 0}
-                        value={assignments[tab-1]?.prompt}
+                        readonly={assignments[tab-1]?.daysLeft < 0 || assignments.length <= 0}
+                        value={assignments[tab-1]?.details}
                         onEdit={(value) => editPrompt(value)}
                     />
                     <div className="inline">
                         <Input
-                            readonly={assignments[tab-1]?.remaining !== null}
+                            readonly={assignments[tab-1]?.daysLeft < 0 || assignments.length <= 0}
                             label={"Termen"}
                             variant={"datepicker"}
-                            value={assignments[tab-1]?.deadline ? new Date(assignments[tab-1]?.deadline * 1000).toISOString().slice(0, 10) : ""}
+                            value={assignments[tab-1]?.dueDate && assignments.length > 0 ? new Date(assignments[tab-1]?.dueDate).toISOString().slice(0, 10) : ""}
                             onEdit={changeDeadline}
                         />
 
                         <Input
-                            readonly={assignments[tab-1]?.grade !== null}
+                            readonly={assignments[tab-1]?.daysLeft < 0 || assignments.length <= 0}
                             label={"Nota"}
                             variant={"small"}
-                            value={assignments[tab-1]?.grade !== null ? assignments[tab-1]?.grade : "N/A"}
+                            value={assignments[tab-1]?.grade ? assignments[tab-1]?.grade : "N/A"}
                             onEdit={changeGrade}
                         />
                     </div>

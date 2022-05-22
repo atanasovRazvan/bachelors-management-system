@@ -3,6 +3,9 @@ import Input from "../../../input/input";
 import Button from "../../../button/button";
 import Error from "../../../message/message";
 import {useState} from "react";
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
+import Message from "../../../message/message";
 
 const dropdownRole = [
     {
@@ -43,7 +46,7 @@ const dropdownInvatamant = [
 
 const CreateAccounts = () => {
 
-    const [error, setError] = useState(null);
+    const [message, setMessage] = useState({type: "error", msg: null});
     const [username, setUsername] = useState("");
     const [nume, setNume] = useState("");
     const [prenume, setPrenume] = useState("");
@@ -61,19 +64,41 @@ const CreateAccounts = () => {
         //TODO: Legatura la back
         const reqObj = {
             username,
-            nume,
-            prenume,
+            lastName: nume,
+            firstName: prenume,
             email,
             password,
             role,
-            nr_matricol: nrMatricol,
-            specializare,
-            generatie,
-            studii,
-            invatamant,
-            grupa
+            nrMatricol,
+            specialization: specializare,
+            generation: generatie,
+            studies: studii,
+            studyType: invatamant,
+            group: grupa
         };
-        console.log(reqObj);
+
+        axios.post(`${baseUrl}auth/signup`, reqObj)
+            .then((res) => {
+                if (res.status === 200) {
+                    setMessage({type: "succes", msg: "Utilizatorul a fost inregistrat cu succes!"});
+                    setPassword("");
+                    setUsername("");
+                    setNume("");
+                    setPrenume("");
+                    setEmail("");
+                    setRole("Student");
+                    setNrMatricol("");
+                    setSpecializare("");
+                    setGeneratie("");
+                    setStudii("Licenta");
+                    setInvatamant("IF");
+                    setGrupa("");
+                }
+                else
+                    setMessage({type: "error", msg: "Utilizatorul deja exista!"});
+            }).catch(() => {
+            setMessage({type: "error", msg: "Utilizatorul deja exista!"});
+        })
     }
 
     return(
@@ -160,8 +185,8 @@ const CreateAccounts = () => {
                 />
             </div>
             {
-                error ?
-                    <Error message={error}/>
+                message.msg ?
+                    <Message variant={message.type} message={message.msg}/>
                     :
                     null
             }

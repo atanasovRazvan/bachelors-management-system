@@ -1,16 +1,24 @@
 import './interese.scss'
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Button from "../../../button/button";
 import Input from "../../../input/input";
-
-const initialInterests = ["Interes 1", "Interes 2", "as;oansglas oasjl asfl asl fasf asfasf asfasfl aslfi asfjlasifh sa;ojfo;asf;oashfof sd"];
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
+import {AuthContext} from "../../../context/AuthProvider";
 
 const Interese = () => {
 
     const [tab, setTab] = useState(1);
-    //TODO: get interests
-    const [interests, setInterests] = useState(initialInterests);
+    const { username } = useContext(AuthContext);
+    const [interests, setInterests] = useState([]);
     const [changed, setChanged] = useState(false);
+
+    useEffect(() => {
+        axios.get(`${baseUrl}coordinator/${username}/interests`)
+            .then((res) => {
+                setInterests(res.data);
+            });
+    }, []);
 
     const newInterest = (value) => {
         setChanged(true);
@@ -34,7 +42,13 @@ const Interese = () => {
 
     const handleSave = () => {
         setChanged(false);
-        //TODO: send interests
+        axios.post(`${baseUrl}coordinator/${username}/interests`, interests)
+            .then(() => {
+                alert("Interese salvate cu succes!");
+            })
+            .catch(() => {
+                alert("A aparut o problema la salvarea intereselor...");
+            });
     }
 
     return(
@@ -65,6 +79,7 @@ const Interese = () => {
                     </div>
                 </div>
                 <Input
+                    readonly={interests?.length <= 0}
                     variant={"textarea"}
                     value={interests[tab-1]}
                     onEdit={(newValue) => setInterests(newInterest(newValue))}

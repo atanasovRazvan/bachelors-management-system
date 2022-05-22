@@ -1,54 +1,28 @@
 import './gestionare-studenti.scss'
 import Table from "../../../table/table";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Button from "../../../button/button";
-
-const students = [
-    {
-        username: "mihai.atanasov@stud.ubbcluj.ro",
-        firstName: "Mihai",
-        lastName: "Atanasov",
-        gradeSesiune: "7",
-        gradeRestanta: "9",
-    },
-    {
-        username: "mihai.atanasov@stud.ubbcluj.ro",
-        firstName: "Mihai",
-        lastName: "Atanasov",
-        gradeSesiune: "6",
-        gradeRestanta: null,
-    },
-    {
-        username: "dan.suciu@ubb.ro",
-        firstName: "Dan",
-        lastName: "Suciu",
-        gradeSesiune: null,
-        gradeRestanta: null,
-    },
-    {
-        username: "mihai.atanasov@stud.ubbcluj.ro",
-        firstName: "Mihai",
-        lastName: "Atanasov",
-        gradeSesiune: "7",
-        gradeRestanta: "9",
-    },
-    {
-        username: "mihai.atanasov@stud.ubbcluj.ro",
-        firstName: "Mihai",
-        lastName: "Atanasov",
-        gradeSesiune: "7",
-        gradeRestanta: "9",
-    },
-];
-
-const criterii = [["ASdaasdasd"], ["AOihaifhwapfjapfhf apfpaohfa s"], ["asfoihsafihasfp aspfhpasfh pisafpoasfophaspofhpaohfpoashfpo pasfhposafhpasf"]];
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
+import {AuthContext} from "../../../context/AuthProvider";
 
 const headers = ["Nume", "Prenume", "Nota Sesiune", "Nota Restante"];
 
 const GestionareStudenti = () => {
 
-    const [data, setData] = useState(students);
+    const [data, setData] = useState([]);
     const [changed, setChanged] = useState(false);
+    const [criterii, setCriterii] = useState([]);
+    const { username } = useContext(AuthContext);
+
+    console.log(data);
+
+    useEffect(() => {
+        axios.get(`${baseUrl}criteria`)
+            .then((res) => setCriterii(res.data.map((criteriu) => [criteriu.criteria])));
+        axios.get(`${baseUrl}coordinator/${username}/students`)
+            .then((res) => setData(res.data));
+    }, []);
 
     const processedData = () => {
         const processed = data.map((entry) => {
@@ -56,17 +30,23 @@ const GestionareStudenti = () => {
         });
 
         return processed?.map((entry) => {
+            entry.pop();
             return entry.slice(1).map((value) => value === null ? "N/A" : value);
         });
     }
 
     const onDownload = (page, line) => {
-        //TODO: Download data[(page-1)*4+line].username paper
+        const { fileName } = data[(page - 1) * 4 + line];
+        if(fileName && fileName.length > 0){
+            window.open(`${baseUrl}paper/${fileName}`);
+        }
+        else{
+            alert("Acest student nu are un fisier incarcat.");
+        }
     }
 
     const onChange = (page, line, column, newValue) => {
-        //TODO: make list
-        const field = column === 2 ? "gradeSesiune" : "gradeRestanta";
+        const field = column === 2 ? "normalGrade" : "retakenGrade";
         const newData = data.map((entry, index) => {
             return index === (page - 1) * 4 + line ?
                 {...entry, [field]: newValue}
@@ -75,6 +55,17 @@ const GestionareStudenti = () => {
         });
         setData(newData);
         setChanged(true);
+    }
+
+    const onSave = () => {
+        const grades = data.map((entry) => ({userName: entry.username, normalGrade: entry.normalGrade, retakenGrade: entry.retakenGrade}));
+        axios.post(`${baseUrl}student/grade`, grades)
+            .then(() => {
+                alert("Note salvate cu succes!");
+            })
+            .catch(() => {
+                alert("A aparut o problema in salvarea notelor...");
+            });
     }
 
     return(
@@ -92,6 +83,7 @@ const GestionareStudenti = () => {
                 <Button
                     value={"Salveaza"}
                     disabled={!changed}
+                    action={onSave}
                 />
             </div>
             <Table

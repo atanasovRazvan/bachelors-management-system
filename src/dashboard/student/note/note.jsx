@@ -1,42 +1,42 @@
 import './note.scss';
 import Table from "../../../table/table";
 import Input from "../../../input/input";
+import {useContext, useEffect, useState} from "react";
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
+import {AuthContext} from "../../../context/AuthProvider";
 
 const Note = () => {
 
-    const assignments = [
-        {
-            number: "1",
-            description: "Sarcina 1",
-            grade: "7",
-        },
-        {
-            number: "3",
-            description: "Sarcina 3",
-            grade: "10",
-        },
-        {
-            number: "2",
-            description: "Sarcina saddsad sad as dsadasdas fas fasfsafsaf asfasfaef rgagawgfak  gaskigagsfgaslfgaskf sakgfkugasfkafgsusafgukasgf iasglfgsaifglasfgl",
-            grade: "5",
-        }
-    ];
+    const [assignments, setAssignments] = useState([]);
+    const [grades, setGrades] = useState({normalGrade: "N/A", retakenGrade: "N/A"});
+    const { username, coordinatorUsername } = useContext(AuthContext);
 
-    const noteFinale = [
-        {
-            sesiune: "N",
-            nota: "9",
-        },
-        {
-            sesiune: "R",
-            nota: null,
-        }
-    ]
+    console.log(assignments);
+    console.log(grades);
 
-    const columns = ["Numar", "Cerinta", "Nota"];
+    useEffect(() => {
+        axios.get(`${baseUrl}assignment/get/${username}/${coordinatorUsername}`)
+            .then((res) => {
+                if(res.status === 200){
+                    setAssignments(res.data.map((assignment) => ({
+                        prompt: assignment.details,
+                        grade: assignment.grade > 0 ? assignment.grade : "N/A"
+                    })));
+                }
+            });
+
+        axios.get(`${baseUrl}student/${username}/grade`)
+            .then((res) => {
+                if(res.status === 200){
+                    setGrades(res.data);
+                }
+            });
+    }, [])
+
+    const columns = ["Cerinta", "Nota"];
 
     const processData = () => {
-        assignments.sort((a,b) => (a.number > b.number) ? 1 : ((b.number > a.number) ? -1 : 0))
         return assignments.map((entry) => {
             return Object.values(entry);
         });
@@ -53,13 +53,13 @@ const Note = () => {
             <div className="sesiune">
                 <Input
                     variant="small"
-                    value={noteFinale[0]["nota"] ? noteFinale[0]["nota"] : "N/A"}
+                    value={grades.normalGrade}
                     label="Nota Sesiune"
                     readonly={true}
                 />
                 <Input
                     variant="small"
-                    value={noteFinale[1]["nota"] ? noteFinale[1]["nota"] : "N/A"}
+                    value={grades.retakenGrade}
                     label="Nota Restante"
                     readonly={true}
                 />

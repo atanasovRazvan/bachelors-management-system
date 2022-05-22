@@ -7,12 +7,21 @@ export const AuthContext = React.createContext();
 const AuthProvider = ({ children }) => {
     const [username, setUsername] = useLocalStorage('username', null);
     const [userRole, setUserRole] = useLocalStorage('userRole', null);
+    const [isAsigned, setIsAsigned] = useLocalStorage('isAsigned', null);
+    const [hasRequest, setHasRequest] = useLocalStorage('hasRequest', false);
+    const [coordinatorUsername, setCoordinatorUsername] = useLocalStorage('coordinator', "");
 
     const value = {
         username,
         userRole,
+        isAsigned,
+        hasRequest,
+        coordinatorUsername,
         setUsername,
         setUserRole,
+        setIsAsigned,
+        setHasRequest,
+        setCoordinatorUsername,
     };
 
     return (

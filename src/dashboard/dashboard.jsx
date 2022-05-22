@@ -16,7 +16,7 @@ const Dashboard = () => {
         if (userRole === "student")
             return <StudentDashboard />
 
-        if (userRole === "coordonator")
+        if (userRole === "coordinator")
             return <CoordonatorDashboard />
     }
 

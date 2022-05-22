@@ -1,49 +1,55 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Table from "../../../table/table";
 import Button from "../../../button/button";
 import './status.scss'
-
-const initialData = Array(13).fill({
-        username: "mihai.atanasov@stud.ubbcluj.ro",
-        nume: "Atanasov",
-        prenume: "Razvan",
-        email: "atanasov.razvan99@gmail.com",
-        coordonator: "dan.suciu@ubb.ro",
-        notaSesiune: "5",
-        notaRestanta: "8",
-    }
-)
+import axios from "axios";
+import {baseUrl} from "../../../utils/constants";
 
 const Status = () => {
 
-    const [data, setData] = useState(initialData);
+    const [students, setStudents] = useState([]);
     const columns = ["Username", "Nume", "Prenume", "Email", "Coordonator", "Nota Sesiune", "Nota Restanta"];
     const [changed, setChanged] = useState(false);
+    const validGrades = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    useEffect(() => {
+        axios.get(`${baseUrl}student`)
+            .then((res) => {
+                setStudents(res.data);
+            });
+    }, [])
 
     const processData = () => {
-        return data.map((entry) => {
-            return Object.values(entry);
+        return students.map((entry) => {
+            return [entry.username, entry.lastName, entry.firstName, entry.email, entry.coordinator, validGrades.includes(entry.normalGrade) ? entry.normalGrade : "N/A", validGrades.includes(entry.retakeGrade) ? entry.retakeGrade : "N/A"]
         });
     }
 
     const generateExcel = () => {
-        //TODO: Download Excel
-        console.log("Se downloadeaza excel");
+        window.open(`${baseUrl}generate/excel`);
     }
 
     const handleEdit = (page, column, line, value) => {
-        const newData = data.map((entry, index) => {
+        const newStudents = students.map((entry, index) => {
             if (index === (page-1) * 4 + line){
-                return {...entry, coordonator: value};
+                return {...entry, coordinator: value};
             }
             return entry;
         });
-        setData(newData);
+        setStudents(newStudents);
         setChanged(true);
     }
 
     const handleSave = () => {
-        //TODO: Save to back
+        const payload = students.map((student) => ({studentUsername: student.username, coordinatorUsername: student.coordinator}));
+
+        axios.post(`${baseUrl}student/assignCoordinators`, payload)
+            .then((res) => {
+                alert("Modificari salvate cu succes!");
+            }).catch(() => {
+                alert("A aparut o problema la salvare...");
+        })
+
         setChanged(false);
     }
 
