@@ -30,7 +30,7 @@ const SarciniCoordonator = () => {
     }, []);
 
     useEffect(() => {
-        if(studentUsername.length > 0)
+        if(studentUsername?.length > 0)
             axios.get(`${baseUrl}assignment/get/${studentUsername}/${username}`)
                 .then((res) => {
                     setAssignments(res.data);

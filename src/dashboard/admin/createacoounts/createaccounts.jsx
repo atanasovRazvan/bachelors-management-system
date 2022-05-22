@@ -13,7 +13,7 @@ const dropdownRole = [
         label: "Student",
     },
     {
-        value: "coordonator",
+        value: "coordinator",
         label: "Coordonator",
     },
 ];
