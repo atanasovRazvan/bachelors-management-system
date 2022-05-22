@@ -45,6 +45,8 @@ const Input = ( { label, variant = "normal", data = [], value, onEdit, type = "t
             value={value}
             onChange={(event) => onEdit(event.target.value)}
             type="date"
+            pattern="\d{2}/\d{2}/\d{4}"
+            disabled={readonly}
         >
         </input>
     )

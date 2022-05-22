@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import downloadSVG from '../utils/download.svg';
 import Input from "../input/input";
 
-const Table = ( {headers = [], data = [], paginated = false, download = false, editableColumns = [], onEditTable})  => {
+const Table = ( {headers = [], data = [], paginated = false, download = false, editableColumns = [], onEditTable, onDownload})  => {
 
     const [displayData, setDisplayData] = useState([]);
     const [page, setPage] = useState(1);
@@ -74,7 +74,7 @@ const Table = ( {headers = [], data = [], paginated = false, download = false, e
                               }
                               </td>
                           ))}
-                          { download ? <Button variant="icon" value={downloadSVG} /> : ''}
+                          { download ? <Button variant="icon" value={downloadSVG} action={() => onDownload(page, line)} /> : ''}
                       </tr>
                   ))}
               </tbody>
